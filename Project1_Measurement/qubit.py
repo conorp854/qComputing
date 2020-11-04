@@ -1,30 +1,35 @@
 # Qubit Simulation
+###
+# Measures the equal amplitude 3 qubit state 100,000 times
+# 3 qubits gives a superposition of 8 states: 000 001 010 011 100 101 110 111
+#
+#
+#
+#
+###
 import numpy as np
+import stateVector as sV
+import measure as measure
 
 debug_flag = 0
 
 np.random.seed(0)
 outputShape = 1
 
-normalisation_factor = 1/np.sqrt(8)
-psi = normalisation_factor*np.array([1,1,1,1,1,1,1,1])
+hadamard = (1/np.sqrt(2))*np.array([[1, 1],[1, -1]])
+identity = np.identity(2)
 
-measured_states = np.zeros((8))
-for repeat in range(100000):
-    probability_of_state = 0
-    r = np.random.uniform(0,1,size=outputShape)
-    for index in range(psi.size):
-        if debug_flag: print("Current State: " + str(bin(index)))
+circuit = np.kron(hadamard, identity)
+print(circuit)
 
-        probability_of_state = probability_of_state + np.abs(psi[index])**2
+numQubits = 2
+psi = sV.stateVector(numQubits)
+print(psi)
+psi = np.matmul(psi, circuit)
+print(psi)
 
-        if debug_flag: print("Probability Of State: " + str(probability_of_state))
-        if r < probability_of_state:
-            if debug_flag: print("Measured State: " + str(bin(index)))
-            measured_states[index] = measured_states[index] + 1
-            break
-        if debug_flag: print()
+measuredStates = measure.measure(psi, basis = 'computational', numMeasurements = 10000)
 
-print()
+print(measuredStates)
 print("Normalised Measured States")
-print(measured_states/(np.sum(measured_states)))
+print(measuredStates/(np.sum(measuredStates)))
