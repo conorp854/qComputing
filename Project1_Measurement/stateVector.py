@@ -1,8 +1,7 @@
 ### StateVector
 # Takes in number of qubits
 # Normalises
-# make into a class to allow nice printing of state
-# print, save state
+# Only for all superposition state at the moment
 import numpy as np
 
 def stateVector(numQubits = 3, debug_flag = 0):

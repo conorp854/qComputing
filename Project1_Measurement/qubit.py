@@ -1,35 +1,35 @@
 # Qubit Simulation
 ###
-# Measures the equal amplitude 3 qubit state 100,000 times
-# 3 qubits gives a superposition of 8 states: 000 001 010 011 100 101 110 111
-#
-#
-#
-#
+# Choose number of qubits
+# Create an equal superposition stateVector
+# Create circuit slices and put into circuit array
+# Run circuit on stateVector
+# Perform N measurements
 ###
 import numpy as np
 import stateVector as sV
 import measure as measure
+import gates as gates
 
 debug_flag = 0
 
 np.random.seed(0)
 outputShape = 1
 
-hadamard = (1/np.sqrt(2))*np.array([[1, 1],[1, -1]])
-identity = np.identity(2)
-
-circuit = np.kron(hadamard, identity)
-print(circuit)
-
-numQubits = 2
+numQubits = 3
 psi = sV.stateVector(numQubits)
-print(psi)
-psi = np.matmul(psi, circuit)
-print(psi)
 
-measuredStates = measure.measure(psi, basis = 'computational', numMeasurements = 10000)
+print(gates.cnot(1, 0, 2))
 
-print(measuredStates)
-print("Normalised Measured States")
-print(measuredStates/(np.sum(measuredStates)))
+circuit = []
+circuit.append(gates.circuitSlice([gates.hadamard(), gates.hadamard(), gates.hadamard()]))
+circuit.append(gates.circuitSlice([gates.pauliX(), gates.identity(), gates.identity()]))
+circuit.append(gates.cnot(0, 2, numQubits))
+
+finalPsi = gates.runCircuit(psi, circuit)
+print(finalPsi)
+#measuredStates = measure.measure(finalPsi, basis = 'computational', numMeasurements = 10000)
+#
+#print(measuredStates)
+#print("Normalised Measured States")
+#print(measuredStates/(np.sum(measuredStates)))
